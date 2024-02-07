@@ -754,7 +754,7 @@ func (t *UDPv5) handleWhoareyou(p *v5wire.Whoareyou, fromID enode.ID, fromAddr *
 	}
 
 	// Resend the call that was answered by WHOAREYOU.
-	t.log.Trace("<< "+p.Name(), "id", c.node.ID(), "addr", fromAddr)
+	t.log.Trace("<< "+p.Name(), "id", c.node.ID(), "addr", fromAddr, "handshakeCount", c.handshakeCount, "challenge", p, "node", c.node)
 	c.handshakeCount++
 	c.challenge = p
 	p.Node = c.node
