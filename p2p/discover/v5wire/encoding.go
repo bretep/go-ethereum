@@ -28,6 +28,7 @@ import (
 	"fmt"
 	"hash"
 
+	"github.com/davecgh/go-spew/spew"
 	"github.com/ethereum/go-ethereum/common/mclock"
 	"github.com/ethereum/go-ethereum/p2p/enode"
 	"github.com/ethereum/go-ethereum/p2p/enr"
@@ -458,10 +459,13 @@ func (c *Codec) Decode(input []byte, addr string) (src enode.ID, n *enode.Node, 
 	msgData := input[authDataEnd:]
 	switch head.Flag {
 	case flagWhoareyou:
+		fmt.Printf("<< flagWhoareyou: head: %s\nmsgData: %s", spew.Sdump(head), spew.Sdump(msgData))
 		p, err = c.decodeWhoareyou(&head, headerData)
 	case flagHandshake:
+		fmt.Printf("<< flagHandshake: head: %s\nmsgData: %s", spew.Sdump(head), spew.Sdump(msgData))
 		n, p, err = c.decodeHandshakeMessage(addr, &head, headerData, msgData)
 	case flagMessage:
+		fmt.Printf("<< flagMessage: head: %s\nmsgData: %s", spew.Sdump(head), spew.Sdump(msgData))
 		p, err = c.decodeMessage(addr, &head, headerData, msgData)
 	default:
 		err = errInvalidFlag
