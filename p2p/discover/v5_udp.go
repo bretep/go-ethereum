@@ -586,10 +586,10 @@ func (t *UDPv5) sendCall(c *callV5) {
 	// The call might have a nonce from a previous handshake attempt. Remove the entry for
 	// the old nonce because we're about to generate a new nonce for this call.
 	addr := &net.UDPAddr{IP: c.node.IP(), Port: c.node.UDP()}
-	if c.nonce != (v5wire.Nonce{}) {
-		t.log.Trace(">> sendCall DELETE "+c.node.IP().String(), "id", c.node.ID(), "addr", addr, "callNonce", spew.Sdump(c))
-		delete(t.activeCallByAuth, c.nonce)
-	}
+	//if c.nonce != (v5wire.Nonce{}) {
+	//	t.log.Trace(">> sendCall DELETE "+c.node.IP().String(), "id", c.node.ID(), "addr", addr, "callNonce", spew.Sdump(c))
+	//	delete(t.activeCallByAuth, c.nonce)
+	//}
 
 	newNonce, _ := t.send(c.node.ID(), addr, c.packet, c.challenge)
 	c.nonce = newNonce
