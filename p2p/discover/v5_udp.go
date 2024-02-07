@@ -54,7 +54,7 @@ type codecV5 interface {
 
 	// Decode decodes a packet. It returns a *v5wire.Unknown packet if decryption fails.
 	// The *enode.Node return value is non-nil when the input contains a handshake response.
-	Decode([]byte, string) (enode.ID, *enode.Node, v5wire.Packet, error)
+	Decode([]byte, string, log.Logger) (enode.ID, *enode.Node, v5wire.Packet, error)
 }
 
 // UDPv5 is the implementation of protocol version 5.
@@ -655,7 +655,7 @@ func (t *UDPv5) dispatchReadPacket(from *net.UDPAddr, content []byte) bool {
 // handlePacket decodes and processes an incoming packet from the network.
 func (t *UDPv5) handlePacket(rawpacket []byte, fromAddr *net.UDPAddr) error {
 	addr := fromAddr.String()
-	fromID, fromNode, packet, err := t.codec.Decode(rawpacket, addr)
+	fromID, fromNode, packet, err := t.codec.Decode(rawpacket, addr, t.log)
 	if err != nil {
 		t.log.Debug("Bad discv5 packet", "id", fromID, "addr", addr, "err", err)
 		return err

@@ -26,6 +26,7 @@ import (
 	"encoding/binary"
 	"errors"
 	"fmt"
+	"github.com/ethereum/go-ethereum/log"
 	"hash"
 
 	"github.com/davecgh/go-spew/spew"
@@ -425,7 +426,7 @@ func (c *Codec) encryptMessage(s *session, p Packet, head *Header, headerData []
 }
 
 // Decode decodes a discovery packet.
-func (c *Codec) Decode(input []byte, addr string) (src enode.ID, n *enode.Node, p Packet, err error) {
+func (c *Codec) Decode(input []byte, addr string, udpLog log.Logger) (src enode.ID, n *enode.Node, p Packet, err error) {
 	if len(input) < minPacketSize {
 		return enode.ID{}, nil, nil, errTooShort
 	}
@@ -459,13 +460,13 @@ func (c *Codec) Decode(input []byte, addr string) (src enode.ID, n *enode.Node, 
 	msgData := input[authDataEnd:]
 	switch head.Flag {
 	case flagWhoareyou:
-		fmt.Printf("<< flagWhoareyou: head: %s\nmsgData: %s", spew.Sdump(head), spew.Sdump(msgData))
+		udpLog.Trace(fmt.Sprintf("<< flagWhoareyou: head: %s\nmsgData: %s", spew.Sdump(head), spew.Sdump(msgData)))
 		p, err = c.decodeWhoareyou(&head, headerData)
 	case flagHandshake:
-		fmt.Printf("<< flagHandshake: head: %s\nmsgData: %s", spew.Sdump(head), spew.Sdump(msgData))
+		udpLog.Trace(fmt.Sprintf("<< flagHandshake: head: %s\nmsgData: %s", spew.Sdump(head), spew.Sdump(msgData)))
 		n, p, err = c.decodeHandshakeMessage(addr, &head, headerData, msgData)
 	case flagMessage:
-		fmt.Printf("<< flagMessage: head: %s\nmsgData: %s", spew.Sdump(head), spew.Sdump(msgData))
+		udpLog.Trace(fmt.Sprintf("<< flagMessage: head: %s\nmsgData: %s", spew.Sdump(head), spew.Sdump(msgData)))
 		p, err = c.decodeMessage(addr, &head, headerData, msgData)
 	default:
 		err = errInvalidFlag
