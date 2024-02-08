@@ -506,7 +506,7 @@ func (t *UDPv5) dispatch() {
 
 		case ct := <-t.respTimeoutCh:
 			active := t.activeCallByNode[ct.c.node.ID()]
-			t.log.Trace(">> dispatch: respTimeoutCh "+ct.c.node.IP().String(), "id", ct.c.node.ID(), "call", spew.Sdump(ct), "active", spew.Sdump(active))
+			t.log.Trace(">> dispatch: respTimeoutCh::"+ct.c.node.IP().String(), "id", ct.c.node.ID(), "call", spew.Sdump(ct), "active", spew.Sdump(active))
 			if ct.c == active && ct.timer == active.timeout {
 				ct.c.err <- errTimeout
 			}
@@ -520,7 +520,7 @@ func (t *UDPv5) dispatch() {
 			c.timeout.Stop()
 			delete(t.activeCallByAuth, c.nonce)
 			delete(t.activeCallByNode, id)
-			t.log.Trace(">> dispatch: callDoneCh "+c.node.IP().String(), "id", c.node.ID(), "call", spew.Sdump(c), "active", spew.Sdump(active))
+			t.log.Trace(">> dispatch: callDoneCh::"+c.node.IP().String(), "id", c.node.ID(), "call", spew.Sdump(c), "active", spew.Sdump(active))
 			t.sendNextCall(id)
 
 		case p := <-t.packetInCh:
@@ -596,7 +596,7 @@ func (t *UDPv5) sendCall(c *callV5) {
 	newNonce, _ := t.send(c.node.ID(), addr, c.packet, c.challenge)
 	c.nonce = newNonce
 	t.activeCallByAuth[newNonce] = c
-	t.log.Trace(">> sendCall DELETE "+c.node.IP().String(), "id", c.node.ID(), "addr", addr, "call", spew.Sdump(c))
+	t.log.Trace(">> sendCall DELETE::"+c.node.IP().String(), "id", c.node.ID(), "addr", addr, "call", spew.Sdump(c))
 	t.startResponseTimeout(c)
 }
 
